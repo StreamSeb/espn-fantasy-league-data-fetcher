@@ -1,5 +1,9 @@
 # ESPN Fantasy League Data Fetcher
 
+[![CI](https://github.com/StreamSeb/espn-fantasy-league-data-fetcher/actions/workflows/ci.yml/badge.svg)](https://github.com/StreamSeb/espn-fantasy-league-data-fetcher/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 Pull your **entire ESPN fantasy football league history** — every season, every
 week, every roster, draft pick and waiver bid — out of ESPN and into a format
 you can actually use.
