@@ -1,0 +1,36 @@
+# Secrets. .env holds your ESPN session cookies - never commit it.
+.env
+.env.*
+!.env.example
+
+# Extracted data. This is your league's history, not the tool; keep it out of
+# the repository even if you fork this privately.
+out/
+data/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+*.duckdb
+*.duckdb.wal
+*.parquet
+*.xlsx
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store

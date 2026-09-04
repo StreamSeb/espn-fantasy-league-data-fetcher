@@ -1,0 +1,12 @@
+# Runtime dependencies. `pip install -e .` reads pyproject.toml instead and is
+# the recommended route; this file is here for `pip install -r`.
+espn-api>=0.44,<1
+requests>=2.31
+python-dotenv>=1.0
+
+# Optional, one per output format. Uncomment what you need, or install the
+# extras: pip install 'ffl-history[postgres,parquet,excel,duckdb]'
+# psycopg[binary]>=3.1   # --format postgres
+# pyarrow>=15            # --format parquet
+# openpyxl>=3.1          # --format xlsx
+# duckdb>=0.10           # --format duckdb

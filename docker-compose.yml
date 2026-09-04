@@ -1,0 +1,50 @@
+# An isolated Postgres for `--format postgres`. Entirely optional: the default
+# SQLite output needs nothing installed at all.
+#
+# Deliberately self-contained - its own compose project, container name, volume
+# and network - so it cannot collide with any other Postgres on your machine.
+#
+#   docker compose up -d      start it
+#   docker compose ps         wait for "healthy"
+#   docker compose down       stop it, keeping the data
+#   docker compose down -v    stop it and delete the data
+
+name: ffl-history
+
+services:
+  db:
+    # 15 or newer is required: the raw store relies on NULLS NOT DISTINCT.
+    image: postgres:16
+    container_name: ffl-history-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ffl_history}
+      POSTGRES_USER: ${POSTGRES_USER:-ffl}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      # Deterministic collation, so ORDER BY is stable across machines.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      # Loopback only: this is a local analysis database, not a service.
+      # 5434 rather than 5432 so it cannot clash with a Postgres you already
+      # run. Change POSTGRES_PORT in .env if 5434 is taken.
+      - "127.0.0.1:${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - ffl-history-pgdata:/var/lib/postgresql/data
+      # Applied by postgres' entrypoint on FIRST init of an empty volume. The
+      # postgres sink also applies it on every run, so a pre-existing volume
+      # converges too. Both paths are idempotent.
+      - ./ffl_history/schema/postgres.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ffl} -d ${POSTGRES_DB:-ffl_history}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+volumes:
+  ffl-history-pgdata:
+    name: ffl-history-pgdata
+
+networks:
+  default:
+    name: ffl-history-net
