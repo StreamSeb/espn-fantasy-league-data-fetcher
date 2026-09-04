@@ -13,11 +13,11 @@ import pytest
 from conftest import LEAGUE_ID
 from espn_api.requests.espn_requests import ESPNAccessDenied
 
-from ffl_history.config import Config
-from ffl_history.errors import FetchError
-from ffl_history.espn import SEASON_VIEWS, WEEKLY_VIEWS
-from ffl_history.pipeline import run_fetch
-from ffl_history.store.sqlite import SqliteRawStore
+from espn_fantasy.config import Config
+from espn_fantasy.errors import FetchError
+from espn_fantasy.espn import SEASON_VIEWS, WEEKLY_VIEWS
+from espn_fantasy.pipeline import run_fetch
+from espn_fantasy.store.sqlite import SqliteRawStore
 
 
 class FakeEspn:
@@ -68,7 +68,7 @@ def fetch(cfg, fake, **kwargs):
 
 def test_settings_are_fetched_before_the_weeks_they_cap(fetch_cfg, monkeypatch):
     fake = FakeEspn()
-    monkeypatch.setattr("ffl_history.pipeline.EspnClient", lambda cfg: fake)
+    monkeypatch.setattr("espn_fantasy.pipeline.EspnClient", lambda cfg: fake)
     fetch(fetch_cfg, fake)
     assert fake.calls[0] == (2023, "mSettings", None)
 
@@ -77,7 +77,7 @@ def test_weeks_are_capped_at_the_latest_scoring_period(fetch_cfg, monkeypatch):
     """A request for a future week returns today's roster, not an empty one,
     so an uncapped fetch would record the same lineups once per week."""
     fake = FakeEspn(latest_period=2)
-    monkeypatch.setattr("ffl_history.pipeline.EspnClient", lambda cfg: fake)
+    monkeypatch.setattr("espn_fantasy.pipeline.EspnClient", lambda cfg: fake)
     report, _ = fetch(fetch_cfg, fake)
 
     requested_weeks = {p for _, v, p in fake.calls if v == "mBoxscore"}
@@ -88,7 +88,7 @@ def test_weeks_are_capped_at_the_latest_scoring_period(fetch_cfg, monkeypatch):
 def test_max_week_narrows_but_never_widens(fetch_cfg, monkeypatch):
     fetch_cfg.max_week = 1
     fake = FakeEspn(latest_period=17)
-    monkeypatch.setattr("ffl_history.pipeline.EspnClient", lambda cfg: fake)
+    monkeypatch.setattr("espn_fantasy.pipeline.EspnClient", lambda cfg: fake)
     fetch(fetch_cfg, fake)
     assert {p for _, v, p in fake.calls if v == "mBoxscore"} == {1}
 
@@ -96,14 +96,14 @@ def test_max_week_narrows_but_never_widens(fetch_cfg, monkeypatch):
 def test_explicit_weeks_are_honoured(fetch_cfg, monkeypatch):
     fetch_cfg.weeks = [2, 3]
     fake = FakeEspn(latest_period=17)
-    monkeypatch.setattr("ffl_history.pipeline.EspnClient", lambda cfg: fake)
+    monkeypatch.setattr("espn_fantasy.pipeline.EspnClient", lambda cfg: fake)
     fetch(fetch_cfg, fake)
     assert {p for _, v, p in fake.calls if v == "mBoxscore"} == {2, 3}
 
 
 def test_a_rerun_fetches_nothing(fetch_cfg, monkeypatch):
     fake = FakeEspn()
-    monkeypatch.setattr("ffl_history.pipeline.EspnClient", lambda cfg: fake)
+    monkeypatch.setattr("espn_fantasy.pipeline.EspnClient", lambda cfg: fake)
     first, _ = fetch(fetch_cfg, fake)
     calls_after_first = len(fake.calls)
 
@@ -115,7 +115,7 @@ def test_a_rerun_fetches_nothing(fetch_cfg, monkeypatch):
 
 def test_force_refetch_ignores_the_ledger(fetch_cfg, monkeypatch):
     fake = FakeEspn()
-    monkeypatch.setattr("ffl_history.pipeline.EspnClient", lambda cfg: fake)
+    monkeypatch.setattr("espn_fantasy.pipeline.EspnClient", lambda cfg: fake)
     first, _ = fetch(fetch_cfg, fake)
     before = len(fake.calls)
     second, _ = fetch(fetch_cfg, fake, force=True)
@@ -125,7 +125,7 @@ def test_force_refetch_ignores_the_ledger(fetch_cfg, monkeypatch):
 def test_only_failed_units_are_retried(fetch_cfg, monkeypatch):
     failing = (2023, "mBoxscore", 2)
     fake = FakeEspn(fail_on={failing})
-    monkeypatch.setattr("ffl_history.pipeline.EspnClient", lambda cfg: fake)
+    monkeypatch.setattr("espn_fantasy.pipeline.EspnClient", lambda cfg: fake)
     first, done = fetch(fetch_cfg, fake)
     assert first.failed == 1
     assert failing not in done
@@ -141,7 +141,7 @@ def test_only_failed_units_are_retried(fetch_cfg, monkeypatch):
 def test_expired_cookies_stop_the_run_immediately(fetch_cfg, monkeypatch):
     """Access denied will fail identically for every remaining unit."""
     fake = FakeEspn(fatal_on={(2023, "mTeam", None)})
-    monkeypatch.setattr("ffl_history.pipeline.EspnClient", lambda cfg: fake)
+    monkeypatch.setattr("espn_fantasy.pipeline.EspnClient", lambda cfg: fake)
     with pytest.raises(FetchError, match="cookies have expired"):
         fetch(fetch_cfg, fake)
     assert len(fake.calls) == 2, "should not have carried on to the weeks"
@@ -151,6 +151,6 @@ def test_seasons_are_discovered_when_not_specified(fetch_cfg, monkeypatch):
     fetch_cfg.seasons = None
     fetch_cfg.max_week = 1
     fake = FakeEspn()
-    monkeypatch.setattr("ffl_history.pipeline.EspnClient", lambda cfg: fake)
+    monkeypatch.setattr("espn_fantasy.pipeline.EspnClient", lambda cfg: fake)
     fetch(fetch_cfg, fake)
     assert {season for season, _, _ in fake.calls} == {2023, 2024}

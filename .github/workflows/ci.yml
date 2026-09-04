@@ -18,7 +18,7 @@ jobs:
         # 15+ is required: the raw store relies on NULLS NOT DISTINCT.
         image: postgres:16
         env:
-          POSTGRES_USER: ffl
+          POSTGRES_USER: espn
           POSTGRES_PASSWORD: ffl
           POSTGRES_DB: ffl_scratch
         ports: ["5432:5432"]
@@ -45,7 +45,7 @@ jobs:
         # No ESPN credentials, so nothing here touches the network: the suite
         # runs against a fixture league and a scratch Postgres.
         env:
-          FFL_TEST_DSN: postgresql://ffl:ffl@127.0.0.1:5432/ffl_scratch
+          ESPN_FANTASY_TEST_DSN: postgresql://espn:espn@127.0.0.1:5432/ffl_scratch
         run: pytest -q
 
   secrets:

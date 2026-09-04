@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+#
+# Refuses to commit ESPN session cookies, or your league's extracted data.
+#
+# Install (once per clone):
+#
+#     git config core.hooksPath .githooks
+#
+# Checks two things, because .gitignore only covers the first:
+#
+#   1. Files that should never be staged at all (.env, databases, exports).
+#      `git add -f` bypasses .gitignore; this does not.
+#   2. Secret-shaped content inside files that ARE meant to be committed --
+#      a cookie pasted into a README, a test, or a bug report reproduction.
+#
+# Only ADDED lines are scanned, so pre-existing content cannot make every
+# later commit fail.
+#
+# A line ending in `allowlist secret` is skipped, for the cases where a
+# well-formed fake is the point -- this hook's own tests, or documentation
+# showing what a real value looks like. Use it sparingly and never on a value
+# that is actually yours.
+#
+# `git commit --no-verify` skips the whole hook. Please do not: a leaked
+# espn_s2 and SWID pair lets anyone act as you on ESPN, and git history is
+# forever once it is pushed.
+
+set -uo pipefail
+
+RED=$'\033[0;31m'; YELLOW=$'\033[0;33m'; BOLD=$'\033[1m'; OFF=$'\033[0m'
+[ -t 2 ] || { RED=""; YELLOW=""; BOLD=""; OFF=""; }
+
+fail=0
+
+note() { printf '%s\n' "$*" >&2; }
+
+reject() {
+    if [ "$fail" -eq 0 ]; then
+        note ""
+        note "${RED}${BOLD}commit blocked: possible secret or private data${OFF}"
+        note ""
+    fi
+    fail=1
+    note "  ${RED}x${OFF} $1"
+    [ $# -gt 1 ] && note "      $2"
+    return 0
+}
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$staged" ] && exit 0
+
+# --- 1. files that must never be committed ---------------------------------
+
+while IFS= read -r file; do
+    case "$file" in
+        .env.example|*/.env.example) ;;                 # the template: fine
+        .env|.env.*|*/.env|*/.env.*)
+            reject "$file is staged" \
+                   "This holds your ESPN cookies. Run: git restore --staged '$file'" ;;
+        *.sqlite3|*.sqlite|*.db|*.duckdb|*.parquet|*.xlsx)
+            reject "$file is staged" \
+                   "That is extracted league data, not source. Keep it out of git." ;;
+        out/*|*/out/*)
+            reject "$file is staged" \
+                   "out/ is your league's data. Run: git restore --staged '$file'" ;;
+    esac
+done <<< "$staged"
+
+# --- 2. secret-shaped content in added lines -------------------------------
+
+# Only added lines (leading '+'), and never the diff's own +++ file headers.
+# Added lines only (leading '+'), minus the diff's own +++ headers, minus
+# anything explicitly marked as a deliberate fake.
+added=$(git diff --cached --unified=0 \
+        | grep -E '^\+' \
+        | grep -Ev '^\+\+\+ ' \
+        | grep -Ev 'allowlist secret')
+
+if [ -n "$added" ]; then
+    # A real espn_s2 is a few hundred URL-encoded characters. Anything past
+    # 40 assigned to that name is not an illustration.
+    if printf '%s' "$added" | grep -Eq '(ESPN_S2|espn_s2)["'"'"']?\s*[=:]\s*["'"'"']?[A-Za-z0-9%+/=_-]{40,}'; then
+        reject "an ESPN_S2 value looks pasted into a staged file" \
+               "Replace it with a placeholder. Then log out of ESPN to rotate it."
+    fi
+
+    # A complete GUID, not the {1A2B3C4D-...} shape used in the docs.
+    if printf '%s' "$added" | grep -Eiq 'SWID["'"'"']?\s*[=:]\s*["'"'"']?\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}'; then
+        reject "a SWID value looks pasted into a staged file" \
+               "Replace it with a placeholder. Then log out of ESPN to rotate it."
+    fi
+
+    # A password that is not one of the obvious stand-ins.
+    if printf '%s' "$added" \
+        | grep -E 'POSTGRES_PASSWORD\s*[=:]\s*\S' \
+        | grep -Eqv 'POSTGRES_PASSWORD\s*[=:]\s*["'"'"']?(change-me|changeme|password|postgres|ffl|secret|your[-_]password|\$\{|%s)' ; then
+        reject "a real-looking POSTGRES_PASSWORD is staged" \
+               "Use a placeholder such as change-me in anything committed."
+    fi
+fi
+
+if [ "$fail" -ne 0 ]; then
+    note ""
+    note "${YELLOW}Nothing has been committed.${OFF} Fix the above and try again."
+    note "If this is a false positive: git commit --no-verify"
+    note ""
+    exit 1
+fi
+
+exit 0

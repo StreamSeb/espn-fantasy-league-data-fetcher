@@ -146,7 +146,7 @@ def run_parse(store: RawStore, cfg: Config) -> Dataset:
     data = parse_store(store, league_id, cfg.seasons)
     if data.is_empty():
         log.warning("nothing to parse - the raw store is empty. "
-                    "Run `ffl-history fetch` first.")
+                    "Run `espn-fantasy fetch` first.")
     return data
 
 

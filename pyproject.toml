@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ffl-history"
+name = "espn-fantasy-league-data-fetcher"
 version = "1.0.0"
 description = "Export an ESPN fantasy football league's full history to SQLite, Postgres, CSV, Parquet and more"
 readme = "README.md"
@@ -30,21 +30,21 @@ postgres = ["psycopg[binary]>=3.1"]
 parquet  = ["pyarrow>=15"]
 excel    = ["openpyxl>=3.1"]
 duckdb   = ["duckdb>=0.10"]
-all      = ["ffl-history[postgres,parquet,excel,duckdb]"]
-dev      = ["ffl-history[all]", "pytest>=8", "ruff>=0.6"]
+all      = ["espn-fantasy-league-data-fetcher[postgres,parquet,excel,duckdb]"]
+dev      = ["espn-fantasy-league-data-fetcher[all]", "pytest>=8", "ruff>=0.6"]
 
 [project.scripts]
-ffl-history = "ffl_history.cli:main"
+espn-fantasy = "espn_fantasy.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/OWNER/ffl-history"
-Issues = "https://github.com/OWNER/ffl-history/issues"
+Homepage = "https://github.com/StreamSeb/espn-fantasy-league-data-fetcher"
+Issues = "https://github.com/StreamSeb/espn-fantasy-league-data-fetcher/issues"
 
 [tool.setuptools.packages.find]
-include = ["ffl_history*"]
+include = ["espn_fantasy*"]
 
 [tool.setuptools.package-data]
-ffl_history = ["schema/*.sql", "env.example"]
+espn_fantasy = ["schema/*.sql", "env.example"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

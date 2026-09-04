@@ -31,5 +31,5 @@ class MissingDependency(FflError):
     def __init__(self, fmt: str, package: str, extra: str) -> None:
         super().__init__(
             f"the '{fmt}' output format needs the {package!r} package.\n"
-            f"Install it with:  pip install 'ffl-history[{extra}]'   "
+            f"Install it with:  pip install -e '.[{extra}]'   "
             f"(or: pip install {package})")

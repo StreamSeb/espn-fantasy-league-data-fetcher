@@ -6,8 +6,8 @@ import argparse
 
 import pytest
 
-from ffl_history.config import Config, parse_int_spec, parse_seasons
-from ffl_history.errors import ConfigError
+from espn_fantasy.config import Config, parse_int_spec, parse_seasons
+from espn_fantasy.errors import ConfigError
 
 
 @pytest.mark.parametrize("spec,expected", [

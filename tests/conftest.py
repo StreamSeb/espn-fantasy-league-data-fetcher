@@ -16,9 +16,9 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from ffl_history.config import Config  # noqa: E402
-from ffl_history.store import RawRow  # noqa: E402
-from ffl_history.store.sqlite import SqliteRawStore  # noqa: E402
+from espn_fantasy.config import Config  # noqa: E402
+from espn_fantasy.store import RawRow  # noqa: E402
+from espn_fantasy.store.sqlite import SqliteRawStore  # noqa: E402
 
 LEAGUE_ID = 999999
 SEASONS = (2023, 2024)
@@ -180,12 +180,12 @@ def isolated_environment(monkeypatch):
     tests working credentials, and a test meant to assert "this fails without
     a league id" would instead start fetching somebody's actual league.
     """
-    prefixes = ("ESPN_", "FFL_", "POSTGRES_", "SWID")
+    prefixes = ("ESPN_", "POSTGRES_", "SWID")
     extras = {"DATABASE_URL", "MAX_SCORING_PERIOD", "REQUEST_DELAY_SECONDS",
               "REQUEST_TIMEOUT_SECONDS", "REQUEST_RETRIES"}
     for name in list(os.environ):
-        # FFL_TEST_DSN survives: it names the scratch database, not a league.
-        if name == "FFL_TEST_DSN":
+        # ESPN_FANTASY_TEST_DSN survives: it names the scratch database, not a league.
+        if name == "ESPN_FANTASY_TEST_DSN":
             continue
         if name.startswith(prefixes) or name in extras:
             monkeypatch.delenv(name, raising=False)

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from ffl_history.cli import build_parser, main
+from espn_fantasy.cli import build_parser, main
 
 
 def test_help_lists_every_command(capsys):
@@ -77,9 +77,9 @@ def test_init_env_refuses_to_clobber(tmp_path, capsys):
 def test_packaged_env_template_matches_the_repository_copy():
     """`init-env` reads the packaged copy, because a wheel has no repo root.
     The root .env.example is what people read on GitHub. Keep them identical."""
-    from ffl_history.cli import ENV_TEMPLATE
+    from espn_fantasy.cli import ENV_TEMPLATE
 
     root = Path(__file__).resolve().parent.parent / ".env.example"
     assert ENV_TEMPLATE.read_text() == root.read_text(), (
-        "ffl_history/env.example and .env.example have drifted; "
+        "espn_fantasy/env.example and .env.example have drifted; "
         "copy one over the other")

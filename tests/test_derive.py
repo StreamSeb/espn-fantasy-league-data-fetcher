@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from conftest import ALICE, BOB, LEAGUE_ID
 
-from ffl_history import tables as T
-from ffl_history.parse import parse_store
-from ffl_history.store.sqlite import SqliteRawStore
+from espn_fantasy import tables as T
+from espn_fantasy.parse import parse_store
+from espn_fantasy.store.sqlite import SqliteRawStore
 
 
 def parsed(path):

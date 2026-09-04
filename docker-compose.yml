@@ -9,17 +9,17 @@
 #   docker compose down       stop it, keeping the data
 #   docker compose down -v    stop it and delete the data
 
-name: ffl-history
+name: espn-fantasy
 
 services:
   db:
     # 15 or newer is required: the raw store relies on NULLS NOT DISTINCT.
     image: postgres:16
-    container_name: ffl-history-db
+    container_name: espn-fantasy-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-ffl_history}
-      POSTGRES_USER: ${POSTGRES_USER:-ffl}
+      POSTGRES_DB: ${POSTGRES_DB:-espn_fantasy}
+      POSTGRES_USER: ${POSTGRES_USER:-espn}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
       # Deterministic collation, so ORDER BY is stable across machines.
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
@@ -29,22 +29,22 @@ services:
       # run. Change POSTGRES_PORT in .env if 5434 is taken.
       - "127.0.0.1:${POSTGRES_PORT:-5434}:5432"
     volumes:
-      - ffl-history-pgdata:/var/lib/postgresql/data
+      - espn-fantasy-pgdata:/var/lib/postgresql/data
       # Applied by postgres' entrypoint on FIRST init of an empty volume. The
       # postgres sink also applies it on every run, so a pre-existing volume
       # converges too. Both paths are idempotent.
-      - ./ffl_history/schema/postgres.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./espn_fantasy/schema/postgres.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ffl} -d ${POSTGRES_DB:-ffl_history}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-espn} -d ${POSTGRES_DB:-espn_fantasy}"]
       interval: 5s
       timeout: 5s
       retries: 20
       start_period: 10s
 
 volumes:
-  ffl-history-pgdata:
-    name: ffl-history-pgdata
+  espn-fantasy-pgdata:
+    name: espn-fantasy-pgdata
 
 networks:
   default:
-    name: ffl-history-net
+    name: espn-fantasy-net

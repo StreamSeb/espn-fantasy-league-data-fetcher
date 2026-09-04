@@ -24,12 +24,12 @@ EARLIEST_SEASON = 2018
 DEFAULT_MAX_WEEK = 18
 DEFAULT_DELAY = 1.0
 DEFAULT_OUT_DIR = "out"
-DEFAULT_SQLITE_PATH = "out/ffl_history.sqlite3"
+DEFAULT_SQLITE_PATH = "out/espn_fantasy.sqlite3"
 
 
 def load_env_file(path: str | os.PathLike[str] | None) -> None:
     """Load a .env file without overriding variables already in the real
-    environment, so `ESPN_LEAGUE_ID=x ffl-history` beats the file."""
+    environment, so `ESPN_LEAGUE_ID=x espn-fantasy` beats the file."""
     if path is None:
         return
     p = Path(path)
@@ -126,8 +126,8 @@ class Config:
 
     pg_host: str = "127.0.0.1"
     pg_port: int = 5434
-    pg_db: str = "ffl_history"
-    pg_user: str = "ffl"
+    pg_db: str = "espn_fantasy"
+    pg_user: str = "espn"
     pg_password: str = ""
     pg_dsn: str = ""
 
@@ -170,17 +170,17 @@ class Config:
         cfg.timeout = _env_float("REQUEST_TIMEOUT_SECONDS", 30.0)
         cfg.retries = _env_int("REQUEST_RETRIES", 3)
 
-        cfg.raw_store = _env("FFL_RAW_STORE", "sqlite").lower()
-        cfg.raw_db_path = _env("FFL_SQLITE_PATH", DEFAULT_SQLITE_PATH)
-        cfg.out_dir = _env("FFL_OUT_DIR", DEFAULT_OUT_DIR)
-        fmts = _env("FFL_FORMATS")
+        cfg.raw_store = _env("ESPN_FANTASY_RAW_STORE", "sqlite").lower()
+        cfg.raw_db_path = _env("ESPN_FANTASY_SQLITE_PATH", DEFAULT_SQLITE_PATH)
+        cfg.out_dir = _env("ESPN_FANTASY_OUT_DIR", DEFAULT_OUT_DIR)
+        fmts = _env("ESPN_FANTASY_FORMATS")
         if fmts:
             cfg.formats = [f.strip().lower() for f in fmts.split(",") if f.strip()]
 
         cfg.pg_host = _env("POSTGRES_HOST", "127.0.0.1")
         cfg.pg_port = _env_int("POSTGRES_PORT", 5434)
-        cfg.pg_db = _env("POSTGRES_DB", "ffl_history")
-        cfg.pg_user = _env("POSTGRES_USER", "ffl")
+        cfg.pg_db = _env("POSTGRES_DB", "espn_fantasy")
+        cfg.pg_user = _env("POSTGRES_USER", "espn")
         cfg.pg_password = os.getenv("POSTGRES_PASSWORD", "")
         cfg.pg_dsn = _env("DATABASE_URL") or _env("POSTGRES_DSN")
         return cfg
@@ -226,7 +226,7 @@ class Config:
                 f"missing required setting(s): {', '.join(missing)}\n\n"
                 "Pass them as flags (--league-id / --espn-s2 / --swid), export\n"
                 "them as environment variables, or put them in a .env file\n"
-                "(`ffl-history init-env` writes a template).\n\n"
+                "(`espn-fantasy init-env` writes a template).\n\n"
                 "ESPN has required auth cookies on historical seasons since\n"
                 "August 2025; see the README for where to find espn_s2 and SWID.")
         if not self.league_id.isdigit():

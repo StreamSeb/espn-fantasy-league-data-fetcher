@@ -15,11 +15,11 @@ from pathlib import Path
 import pytest
 from conftest import LEAGUE_ID
 
-from ffl_history import tables as T
-from ffl_history.parse import parse_store
-from ffl_history.sinks import available_formats, build_sinks
-from ffl_history.sinks.coltypes import classify
-from ffl_history.store.sqlite import SqliteRawStore
+from espn_fantasy import tables as T
+from espn_fantasy.parse import parse_store
+from espn_fantasy.sinks import available_formats, build_sinks
+from espn_fantasy.sinks.coltypes import classify
+from espn_fantasy.store.sqlite import SqliteRawStore
 
 pytest.importorskip("pyarrow")
 
@@ -164,8 +164,8 @@ def test_no_column_is_accidentally_untyped():
 def test_a_missing_optional_dependency_fails_before_any_fetching(cfg, monkeypatch):
     """`run` builds its sinks before the first request, so a missing package
     costs a second rather than a completed ten-minute fetch."""
-    from ffl_history.errors import MissingDependency
-    from ffl_history.sinks.parquet_sink import ParquetSink
+    from espn_fantasy.errors import MissingDependency
+    from espn_fantasy.sinks.parquet_sink import ParquetSink
 
     monkeypatch.setattr("importlib.util.find_spec", lambda name: None)
     cfg.formats = ["parquet"]
@@ -175,7 +175,7 @@ def test_a_missing_optional_dependency_fails_before_any_fetching(cfg, monkeypatc
     try:
         ParquetSink.check_available()
     except MissingDependency as exc:
-        assert "ffl-history[parquet]" in str(exc)
+        assert ".[parquet]" in str(exc)
         assert "pip install pyarrow" in str(exc)
 
 

@@ -5,7 +5,7 @@ requests>=2.31
 python-dotenv>=1.0
 
 # Optional, one per output format. Uncomment what you need, or install the
-# extras: pip install 'ffl-history[postgres,parquet,excel,duckdb]'
+# extras: pip install 'espn-fantasy[postgres,parquet,excel,duckdb]'
 # psycopg[binary]>=3.1   # --format postgres
 # pyarrow>=15            # --format parquet
 # openpyxl>=3.1          # --format xlsx

@@ -1,6 +1,6 @@
 """Postgres round-trip.
 
-Skipped unless FFL_TEST_DSN names a Postgres 15+ database that the test may
+Skipped unless ESPN_FANTASY_TEST_DSN names a Postgres 15+ database that the test may
 create and drop tables in. CI provides one; locally, point it at a scratch
 database - never at one holding a real league.
 """
@@ -12,16 +12,16 @@ import os
 import pytest
 from conftest import LEAGUE_ID
 
-from ffl_history import tables as T
-from ffl_history.parse import parse_store
-from ffl_history.sinks.postgres_sink import PostgresSink
-from ffl_history.store import RawRow
-from ffl_history.store.postgres import PostgresRawStore
-from ffl_history.store.sqlite import SqliteRawStore
+from espn_fantasy import tables as T
+from espn_fantasy.parse import parse_store
+from espn_fantasy.sinks.postgres_sink import PostgresSink
+from espn_fantasy.store import RawRow
+from espn_fantasy.store.postgres import PostgresRawStore
+from espn_fantasy.store.sqlite import SqliteRawStore
 
 #: Read at import time, before the environment-isolation fixture runs.
-DSN = os.getenv("FFL_TEST_DSN")
-pytestmark = pytest.mark.skipif(not DSN, reason="set FFL_TEST_DSN to run")
+DSN = os.getenv("ESPN_FANTASY_TEST_DSN")
+pytestmark = pytest.mark.skipif(not DSN, reason="set ESPN_FANTASY_TEST_DSN to run")
 psycopg = pytest.importorskip("psycopg")
 
 

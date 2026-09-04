@@ -37,7 +37,7 @@ class ExcelSink(Sink):
             raise MissingDependency("xlsx", "openpyxl", "excel") from exc
 
         target = out_dir(self.cfg)
-        path = target / "ffl_history.xlsx"
+        path = target / "espn_fantasy.xlsx"
         workbook = Workbook(write_only=False)
         workbook.remove(workbook.active)
 

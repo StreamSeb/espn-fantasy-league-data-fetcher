@@ -23,7 +23,7 @@ from .report import print_summary
 from .sinks import available_formats, build_sinks
 from .store import open_store
 
-log = logging.getLogger("ffl_history")
+log = logging.getLogger("espn_fantasy")
 
 #: Shipped inside the package, not read from the repository root: a wheel
 #: installed from PyPI has no repository root to read from. The root
@@ -33,20 +33,20 @@ ENV_TEMPLATE = Path(__file__).resolve().parent / "env.example"
 EPILOG = """\
 examples:
   # everything, discovering which seasons your league has, into out/
-  ffl-history run --league-id 123456
+  espn-fantasy run --league-id 123456
 
   # just two seasons, as CSV and a spreadsheet
-  ffl-history run --seasons 2023,2024 --format csv --format xlsx
+  espn-fantasy run --seasons 2023,2024 --format csv --format xlsx
 
   # load into the Postgres stack in docker-compose.yml
   docker compose up -d
-  ffl-history run --format postgres
+  espn-fantasy run --format postgres
 
   # add a new format later, with no further requests to ESPN
-  ffl-history export --format parquet
+  espn-fantasy export --format parquet
 
   # top up an in-progress season; already-stored weeks are skipped
-  ffl-history run --seasons 2025
+  espn-fantasy run --seasons 2025
 """
 
 
@@ -56,12 +56,12 @@ def build_parser() -> argparse.ArgumentParser:
                             for name, cls in formats.items())
 
     parser = argparse.ArgumentParser(
-        prog="ffl-history",
+        prog="espn-fantasy",
         description="Export an ESPN fantasy football league's full history.",
         epilog=EPILOG + "\noutput formats:\n" + format_help,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--version", action="version",
-                        version=f"ffl-history {__version__}")
+                        version=f"espn-fantasy {__version__}")
 
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--env-file", default=".env", metavar="PATH",
@@ -196,7 +196,7 @@ def cmd_fetch(cfg: Config, args: argparse.Namespace) -> int:
           f"{report.skipped} were already there.")
     if report.failed:
         print(f"{report.failed} unit(s) failed. Re-run to retry only those.")
-    print("Next: `ffl-history parse` to build the tables.")
+    print("Next: `espn-fantasy parse` to build the tables.")
     return 0
 
 
@@ -271,7 +271,7 @@ def cmd_init_env(cfg: Config, args: argparse.Namespace) -> int:
     # The file is about to hold session cookies for the user's ESPN account.
     os.chmod(target, 0o600)
     print(f"Wrote {target} (mode 600). Fill in ESPN_LEAGUE_ID, ESPN_S2 and "
-          f"SWID, then run:\n  ffl-history run")
+          f"SWID, then run:\n  espn-fantasy run")
     return 0
 
 

@@ -3,7 +3,7 @@
 --
 -- Written to run unchanged against both outputs:
 --
---   sqlite3 out/ffl_history.sqlite3 < examples/queries.sql
+--   sqlite3 out/espn_fantasy.sqlite3 < examples/queries.sql
 --   psql "$DATABASE_URL" -f examples/queries.sql
 --
 -- so they avoid anything specific to one engine. `season_champions`,

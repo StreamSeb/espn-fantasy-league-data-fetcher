@@ -26,7 +26,7 @@ def print_summary(data: Dataset, store: RawStore | None = None,
                   stream: Any = None) -> None:
     out = stream or sys.stdout
     if data.is_empty():
-        print("No data. Run `ffl-history fetch` first.", file=out)
+        print("No data. Run `espn-fantasy fetch` first.", file=out)
         return
 
     _section(out, "ROWS PER SEASON")

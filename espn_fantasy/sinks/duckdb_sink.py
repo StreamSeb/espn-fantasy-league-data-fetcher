@@ -28,7 +28,7 @@ class DuckdbSink(Sink):
     name = "duckdb"
     requires = ("duckdb", "duckdb")
     extra = "duckdb"
-    help = "a single .duckdb file (needs `pip install 'ffl-history[duckdb]'`)"
+    help = "a single .duckdb file (needs `pip install 'espn-fantasy[duckdb]'`)"
 
     def write(self, data: Dataset) -> SinkResult:
         try:
@@ -36,7 +36,7 @@ class DuckdbSink(Sink):
         except ModuleNotFoundError as exc:
             raise MissingDependency("duckdb", "duckdb", "duckdb") from exc
 
-        path = Path(self.cfg.out_dir) / "ffl_history.duckdb"
+        path = Path(self.cfg.out_dir) / "espn_fantasy.duckdb"
         path.parent.mkdir(parents=True, exist_ok=True)
         conn = duckdb.connect(str(path))
         total = 0

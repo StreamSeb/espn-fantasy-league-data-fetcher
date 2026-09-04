@@ -88,7 +88,7 @@ class SqliteSink(Sink):
     help = "a single .sqlite3 file (default; no server, no dependencies)"
 
     def write(self, data: Dataset) -> SinkResult:
-        path = Path(self.cfg.out_dir) / "ffl_history.sqlite3"
+        path = Path(self.cfg.out_dir) / "espn_fantasy.sqlite3"
         path.parent.mkdir(parents=True, exist_ok=True)
         try:
             conn = sqlite3.connect(path)

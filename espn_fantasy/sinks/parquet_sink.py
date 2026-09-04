@@ -20,7 +20,7 @@ class ParquetSink(Sink):
     name = "parquet"
     requires = ("pyarrow", "pyarrow")
     extra = "parquet"
-    help = "one .parquet per table (needs `pip install 'ffl-history[parquet]'`)"
+    help = "one .parquet per table (needs `pip install 'espn-fantasy[parquet]'`)"
 
     def write(self, data: Dataset) -> SinkResult:
         try:
