@@ -4,7 +4,7 @@ Bug reports and pull requests are welcome.
 
 ## Before you open an issue
 
-**Never paste `ESPN_S2` or `SWID` into an issue** — not in a log, not in a
+**Never paste `ESPN_S2` or `SWID` into an issue** - not in a log, not in a
 screenshot, not in a stack trace. Anyone holding them can act as you on ESPN.
 `espn-fantasy doctor` prints them masked; use its output.
 
@@ -48,7 +48,7 @@ and the hook will skip that one line. Nothing else on the file is exempted.
 `git commit --no-verify` skips the hook entirely. Please do not.
 
 The test suite needs no network and no database. It runs against a
-hand-written fixture league in `tests/conftest.py` — deliberately synthetic, so
+hand-written fixture league in `tests/conftest.py` - deliberately synthetic, so
 the repository carries nobody's member GUIDs or team names.
 
 To also run the Postgres round-trip tests, point `ESPN_FANTASY_TEST_DSN` at a scratch
@@ -66,7 +66,7 @@ ESPN_FANTASY_TEST_DSN="postgresql://espn:PASSWORD@127.0.0.1:5434/ffl_scratch" py
    `Dataset` and writes it; that is the whole interface.
 2. Add it to the registry in `espn_fantasy/sinks/__init__.py`.
 3. If it needs a package, add an extra in `pyproject.toml` and raise
-   `MissingDependency` on the import — never let a missing package surface as
+   `MissingDependency` on the import - never let a missing package surface as
    a bare `ModuleNotFoundError`.
 4. Add it to `FILE_FORMATS` in `tests/test_sinks.py`, which asserts that every
    format writes the same row count as every other.
@@ -78,7 +78,7 @@ Parsers and the raw store should not need to change.
 1. Add the column to the relevant `Table` in `espn_fantasy/tables.py`.
 2. Populate it in `espn_fantasy/parse.py`.
 3. Give it a type in `espn_fantasy/sinks/coltypes.py` unless plain text is
-   right — the typed sinks share that one classification so their schemas
+   right - the typed sinks share that one classification so their schemas
    cannot drift apart.
 4. Add it to `espn_fantasy/schema/postgres.sql`, which is hand-written on
    purpose.
@@ -86,5 +86,5 @@ Parsers and the raw store should not need to change.
 ## Style
 
 Match what is there. Comments explain *why*, especially where ESPN's API is
-surprising — that is most of the value in this codebase, and most of the
+surprising - that is most of the value in this codebase, and most of the
 comments earn their place by having cost somebody an afternoon.
