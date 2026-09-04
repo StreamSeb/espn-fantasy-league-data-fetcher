@@ -152,3 +152,13 @@ def test_the_marker_only_exempts_its_own_line(repo):
           "SWID={1A2B3C4D-5E6F-7081-92A3-B4C5D6E7F809}  <!-- allowlist secret -->\n"
           "ESPN_S2=" + "AEB%2F" * 60 + "\n")
     assert commit(repo).returncode != 0
+
+
+def test_throwaway_ci_credentials_are_allowed(repo):
+    """CI needs a password in plain sight; it must not look like a leak."""
+    stage(repo, ".github/workflows/ci.yml",
+          "        env:\n"
+          "          POSTGRES_USER: espn\n"
+          "          POSTGRES_PASSWORD: espn\n")
+    result = commit(repo)
+    assert result.returncode == 0, result.stderr

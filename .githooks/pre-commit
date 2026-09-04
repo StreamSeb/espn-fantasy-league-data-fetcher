@@ -93,7 +93,7 @@ if [ -n "$added" ]; then
     # A password that is not one of the obvious stand-ins.
     if printf '%s' "$added" \
         | grep -E 'POSTGRES_PASSWORD\s*[=:]\s*\S' \
-        | grep -Eqv 'POSTGRES_PASSWORD\s*[=:]\s*["'"'"']?(change-me|changeme|password|postgres|ffl|secret|your[-_]password|\$\{|%s)' ; then
+        | grep -Eqv 'POSTGRES_PASSWORD\s*[=:]\s*["'"'"']?(change-me|changeme|password|postgres|espn|ffl|secret|example|test|your[-_]password|\$\{|%s)' ; then
         reject "a real-looking POSTGRES_PASSWORD is staged" \
                "Use a placeholder such as change-me in anything committed."
     fi

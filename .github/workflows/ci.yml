@@ -19,8 +19,8 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: espn
-          POSTGRES_PASSWORD: ffl
-          POSTGRES_DB: ffl_scratch
+          POSTGRES_PASSWORD: espn
+          POSTGRES_DB: espn_scratch
         ports: ["5432:5432"]
         options: >-
           --health-cmd pg_isready
@@ -45,7 +45,7 @@ jobs:
         # No ESPN credentials, so nothing here touches the network: the suite
         # runs against a fixture league and a scratch Postgres.
         env:
-          ESPN_FANTASY_TEST_DSN: postgresql://espn:espn@127.0.0.1:5432/ffl_scratch
+          ESPN_FANTASY_TEST_DSN: postgresql://espn:espn@127.0.0.1:5432/espn_scratch
         run: pytest -q
 
   secrets:
